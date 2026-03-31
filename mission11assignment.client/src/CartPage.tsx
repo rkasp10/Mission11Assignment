@@ -1,14 +1,10 @@
-import type { CartItem } from './types';
+import { useNavigate } from 'react-router-dom';
+import { useCart } from './CartContext';
 
 // Full cart page showing all items with quantity, subtotal, and total
-function CartPage({ cart, onContinueShopping, onUpdateQuantity, onRemoveItem }: {
-    cart: CartItem[];
-    onContinueShopping: () => void;
-    onUpdateQuantity: (bookID: number, quantity: number) => void;
-    onRemoveItem: (bookID: number) => void;
-}) {
-    // Calculate the grand total across all items
-    const total = cart.reduce((sum, item) => sum + item.book.price * item.quantity, 0);
+function CartPage() {
+    const navigate = useNavigate();
+    const { cart, updateQuantity, removeItem, cartTotal } = useCart();
 
     return (
         <div className="container mt-4">
@@ -17,7 +13,7 @@ function CartPage({ cart, onContinueShopping, onUpdateQuantity, onRemoveItem }: 
             {cart.length === 0 ? (
                 <div className="text-center">
                     <p className="text-muted fs-5">Your cart is empty.</p>
-                    <button className="btn btn-primary" onClick={onContinueShopping}>
+                    <button className="btn btn-primary" onClick={() => navigate('/')}>
                         Continue Shopping
                     </button>
                 </div>
@@ -48,12 +44,12 @@ function CartPage({ cart, onContinueShopping, onUpdateQuantity, onRemoveItem }: 
                                             className="form-control form-control-sm"
                                             min="1"
                                             value={item.quantity}
-                                            onChange={(e) => onUpdateQuantity(item.book.bookID, parseInt(e.target.value) || 1)}
+                                            onChange={(e) => updateQuantity(item.book.bookID, parseInt(e.target.value) || 1)}
                                         />
                                     </td>
                                     <td>${(item.book.price * item.quantity).toFixed(2)}</td>
                                     <td>
-                                        <button className="btn btn-sm btn-outline-danger" onClick={() => onRemoveItem(item.book.bookID)}>
+                                        <button className="btn btn-sm btn-outline-danger" onClick={() => removeItem(item.book.bookID)}>
                                             Remove
                                         </button>
                                     </td>
@@ -64,12 +60,13 @@ function CartPage({ cart, onContinueShopping, onUpdateQuantity, onRemoveItem }: 
 
                     <div className="row">
                         <div className="col-md-6">
-                            <button className="btn btn-outline-primary" onClick={onContinueShopping}>
+                            <button className="btn btn-outline-primary" onClick={() => navigate('/')}>
                                 Continue Shopping
                             </button>
                         </div>
                         <div className="col-md-6 text-end">
-                            <h4>Total: ${total.toFixed(2)}</h4>
+                            {/* Grand total for all items */}
+                            <h4>Total: ${cartTotal.toFixed(2)}</h4>
                             <button className="btn btn-success btn-lg mt-2">
                                 Checkout
                             </button>

@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
-import type { Book, BooksResponse, CartItem } from './types';
+import { useNavigate } from 'react-router-dom';
+import type { Book, BooksResponse } from './types';
+import { useCart } from './CartContext';
 import CartToast from './CartToast';
 import CartOffcanvas from './CartOffcanvas';
 
-function BookList({ cart, onAddToCart, onNavigateToCart }: {
-    cart: CartItem[];
-    onAddToCart: (book: Book) => void;
-    onNavigateToCart: () => void;
-}) {
+function BookList() {
+    const navigate = useNavigate();
+    const { cart, addToCart, cartItemCount } = useCart();
+
     const [data, setData] = useState<BooksResponse | null>(null);
     const [pageNumber, setPageNumber] = useState(1);
     const [pageSize, setPageSize] = useState(5); // default to 5 per page
@@ -59,12 +60,10 @@ function BookList({ cart, onAddToCart, onNavigateToCart }: {
     };
 
     const handleAddToCart = (book: Book) => {
-        onAddToCart(book);
+        addToCart(book);
         setToastBook(book.title);
         setShowToast(true);
     };
-
-    const cartItemCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
     return (
         <div className="container-fluid mt-4 px-4">
@@ -216,10 +215,9 @@ function BookList({ cart, onAddToCart, onNavigateToCart }: {
 
             {/* Offcanvas slide-in cart summary */}
             <CartOffcanvas
-                cart={cart}
                 show={showOffcanvas}
                 onClose={() => setShowOffcanvas(false)}
-                onViewCart={() => { setShowOffcanvas(false); onNavigateToCart(); }}
+                onViewCart={() => { setShowOffcanvas(false); navigate('/cart'); }}
             />
         </div>
     );

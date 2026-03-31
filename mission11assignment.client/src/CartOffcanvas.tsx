@@ -1,15 +1,12 @@
-import type { CartItem } from './types';
+import { useCart } from './CartContext';
 
 // Bootstrap Offcanvas slide-in panel that shows a quick cart summary
-function CartOffcanvas({ cart, show, onClose, onViewCart }: {
-    cart: CartItem[];
+function CartOffcanvas({ show, onClose, onViewCart }: {
     show: boolean;
     onClose: () => void;
     onViewCart: () => void;
 }) {
-    // Totals for the summary display
-    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-    const totalPrice = cart.reduce((sum, item) => sum + item.book.price * item.quantity, 0);
+    const { cart, cartItemCount, cartTotal } = useCart();
 
     return (
         <>
@@ -42,8 +39,8 @@ function CartOffcanvas({ cart, show, onClose, onViewCart }: {
                             ))}
                             <hr />
                             <div className="d-flex justify-content-between fw-bold">
-                                <span>{totalItems} item{totalItems !== 1 ? 's' : ''}</span>
-                                <span>Total: ${totalPrice.toFixed(2)}</span>
+                                <span>{cartItemCount} item{cartItemCount !== 1 ? 's' : ''}</span>
+                                <span>Total: ${cartTotal.toFixed(2)}</span>
                             </div>
                             <button className="btn btn-primary w-100 mt-3" onClick={onViewCart}>
                                 View Full Cart
