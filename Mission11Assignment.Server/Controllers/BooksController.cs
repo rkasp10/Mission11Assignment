@@ -15,11 +15,17 @@ namespace Mission11Assignment.Server.Controllers
             _context = context;
         }
 
-        // GET /api/books?pageNumber=1&pageSize=5&sortBy=title
+        // GET /api/books?pageNumber=1&pageSize=5&sortBy=title&category=Biography
         [HttpGet]
-        public IActionResult GetBooks(int pageNumber = 1, int pageSize = 5, string sortBy = "")
+        public IActionResult GetBooks(int pageNumber = 1, int pageSize = 5, string sortBy = "", string category = "")
         {
             var query = _context.Books.AsQueryable();
+
+            // Filter by category if one is selected
+            if (!string.IsNullOrEmpty(category))
+            {
+                query = query.Where(b => b.Category == category);
+            }
 
             // Sort alphabetically by title if requested
             if (sortBy.Equals("title", StringComparison.OrdinalIgnoreCase))
@@ -44,6 +50,19 @@ namespace Mission11Assignment.Server.Controllers
                 currentPage = pageNumber,
                 pageSize
             });
+        }
+
+        // Returns all unique categories for the filter sidebar
+        [HttpGet("categories")]
+        public IActionResult GetCategories()
+        {
+            var categories = _context.Books
+                .Select(b => b.Category)
+                .Distinct()
+                .OrderBy(c => c)
+                .ToList();
+
+            return Ok(categories);
         }
     }
 }
