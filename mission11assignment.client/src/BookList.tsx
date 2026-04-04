@@ -7,7 +7,7 @@ import CartOffcanvas from './CartOffcanvas';
 
 function BookList() {
     const navigate = useNavigate();
-    const { cart, addToCart, cartItemCount } = useCart();
+    const { addToCart, cartItemCount } = useCart();
 
     const [data, setData] = useState<BooksResponse | null>(null);
     const [pageNumber, setPageNumber] = useState(1);
@@ -69,15 +69,19 @@ function BookList() {
         <div className="container-fluid mt-4 px-4">
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h1 className="text-dark mb-0">Hilton's Bookstore</h1>
-                {/* Cart button that opens the offcanvas summary */}
-                <button className="btn btn-outline-dark position-relative" onClick={() => setShowOffcanvas(true)}>
-                    Cart
-                    {cartItemCount > 0 && (
-                        <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                            {cartItemCount}
-                        </span>
-                    )}
-                </button>
+                <div className="d-flex gap-2">
+                    <button className="btn btn-outline-secondary" onClick={() => navigate('/adminbooks')}>
+                        Admin
+                    </button>
+                    <button className="btn btn-outline-dark position-relative" onClick={() => setShowOffcanvas(true)}>
+                        Cart
+                        {cartItemCount > 0 && (
+                            <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                {cartItemCount}
+                            </span>
+                        )}
+                    </button>
+                </div>
             </div>
 
             {/* Bootstrap Grid: sidebar for categories, main area for books */}
